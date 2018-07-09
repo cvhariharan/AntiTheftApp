@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Anti-Theft</string>
+    <string name="settings_title">Settings</string>
+    <string name="phone_edittext">Phone Number</string>
+    <string name="phone_key" translatable="false">phone_number</string>
+    <string name="phone_summary">Register a phone number to only allow messages from that number</string>
+    <string name="phrase_edittext">Pass Phrase</string>
+    <string name="phrase_summary">Set a pass phrase. The phone will only respond with the location if the message has the pass phrase. Default is locate</string>
+    <string name="phrase_key" translatable="false">phrase_key</string>
 </resources>
