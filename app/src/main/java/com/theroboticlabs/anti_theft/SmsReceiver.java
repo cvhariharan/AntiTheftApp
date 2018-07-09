@@ -24,6 +24,9 @@ public class SmsReceiver extends BroadcastReceiver {
                 String number = message.getOriginatingAddress();
                 if(phrase.equals(body) && registeredNumber.equals(number)){
                     Toast.makeText(context, "Locating...", Toast.LENGTH_LONG).show();
+                    Intent locate = new Intent(context, LocateAndSend.class);
+                    locate.putExtra("number", number);
+                    context.startService(locate);
                 }
             }
         }
