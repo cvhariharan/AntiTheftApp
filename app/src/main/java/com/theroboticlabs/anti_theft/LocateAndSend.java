@@ -11,11 +11,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 public class LocateAndSend extends IntentService {
 
     private static final String TAG = "com.theroboticlabs";
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     public LocateAndSend() {
         super("LocateAndSend");
@@ -25,32 +31,46 @@ public class LocateAndSend extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String number = intent.getExtras().getString("number");
-        Log.d(TAG, "onHandleIntent: "+number);
-        locationListener = new LocationListener() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
-            public void onLocationChanged(Location location) {
-                Toast.makeText(getBaseContext(), location.getLatitude()+" "+location.getLongitude(), Toast.LENGTH_LONG);
-                Log.d(TAG, "onLocationChanged: "+location.getLongitude());
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
+                    Toast.makeText(getBaseContext(), "Location: "+location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_LONG).show();
+                }
             }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-        locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,0,locationListener);
+        });
     }
+
+//        Log.d(TAG, "onHandleIntent: "+number);
+//        locationListener = new LocationListener() {
+//            @Override
+//            public void onLocationChanged(Location location) {
+//                Toast.makeText(getBaseContext(), location.getLatitude()+" "+location.getLongitude(), Toast.LENGTH_LONG);
+//                Log.d(TAG, "onLocationChanged: "+location.getLongitude());
+//            }
+//
+//            @Override
+//            public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//            }
+//
+//            @Override
+//            public void onProviderEnabled(String provider) {
+//
+//            }
+//
+//            @Override
+//            public void onProviderDisabled(String provider) {
+//
+//            }
+//        };
+//
+//        locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0,locationListener);
+
+//    }
 
 }
