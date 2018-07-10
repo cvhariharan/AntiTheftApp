@@ -1,8 +1,10 @@
 package com.theroboticlabs.anti_theft;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         checkAllPermissions();
+
+//        //Register receiver
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("android.provider.Telephony.SMS_RECEIVED_ACTION");
+//        SmsReceiver smsReceiver = new SmsReceiver();
+//        registerReceiver(smsReceiver, filter);
 
 
     }

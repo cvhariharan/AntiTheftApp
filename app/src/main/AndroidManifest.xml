@@ -39,6 +39,9 @@
         <service
             android:name=".LocateAndSend"
             android:exported="false" />
+        <service
+            android:name=".LocateAndSendJob"
+            android:exported="false" />
     </application>
 
 </manifest>
