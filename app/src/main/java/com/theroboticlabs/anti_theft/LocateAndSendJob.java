@@ -92,9 +92,10 @@ public class LocateAndSendJob extends Service {
                                     android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
                                     smsManager.sendTextMessage(number, null, smsBody, null, null);
                                     Log.d(TAG, "SMS sent!");
-                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
+                                    Log.d(TAG, "Couldn't Locate. NULL");
+//                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -153,44 +154,4 @@ public class LocateAndSendJob extends Service {
         unregisterReceiver(smsReceiver);
     }
 
-    //    @Override
-//    public boolean onStartJob(final JobParameters params) {
-//        background = new AsyncTask() {
-//            String number = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-//                    .getString(getBaseContext().getString(R.string.phone_key),"");
-//            @SuppressLint("MissingPermission")
-//            @Override
-//            protected Object doInBackground(Object[] objects) {
-//                mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-//                mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        if (location != null) {
-//                            String smsBody = "Location: "+location.getLatitude() + " " + location.getLongitude();
-//                            Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
-//                            android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                            smsManager.sendTextMessage(number, null, smsBody, null, null);
-//                            Log.d(TAG, "SMS sent!");
-//                            Toast.makeText(getBaseContext(), smsBody, Toast.LENGTH_LONG).show();
-//                        }
-//                        else {
-//                            Toast.makeText(getBaseContext(), "Couldn't locate", Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                });
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Object o) {
-//                jobFinished(params, false);
-//            }
-//        };
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onStopJob(JobParameters params) {
-//        return false;
-//    }
 }

@@ -1,25 +1,17 @@
 package com.theroboticlabs.anti_theft;
-//TODO: Make a foreground service
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.telephony.SmsMessage;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 public class SmsReceiver extends BroadcastReceiver {
 

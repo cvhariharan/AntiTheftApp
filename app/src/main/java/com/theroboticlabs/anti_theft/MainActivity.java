@@ -18,11 +18,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-
-//    private LocationListener locationListener;
-//    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +30,26 @@ public class MainActivity extends AppCompatActivity {
 
         checkAllPermissions();
 
+        Button button = (Button) findViewById(R.id.start);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startListening();
+            }
+        });
+
+    }
+
+    private void startListening()
+    {
+        //TODO: check if location services are available
         Intent i = new Intent(this, LocateAndSendJob.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(i);
         }
         else
             startService(i);
-//        //Register receiver
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("android.provider.Telephony.SMS_RECEIVED_ACTION");
-//        SmsReceiver smsReceiver = new SmsReceiver();
-//        registerReceiver(smsReceiver, filter);
-
-
     }
 
     private void checkAllPermissions() {
@@ -63,46 +69,6 @@ public class MainActivity extends AppCompatActivity {
                 }, 10);
             }
         }
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECEIVE_SMS)) {
-//            } else {
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS},10);
-//            }
-//        }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if(requestCode == 10) {
-//            if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-//                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                initializeListeners();
-//            }
-//        }
-//    }
-//
-//    private void initializeListeners() {
-//        locationListener = new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//
-//            }
-//
-//            @Override
-//            public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderEnabled(String provider) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderDisabled(String provider) {
-//
-//            }
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
