@@ -31,6 +31,12 @@ public class MainActivity extends AppCompatActivity {
 
         checkAllPermissions();
 
+        Intent i = new Intent(this, LocateAndSendJob.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(i);
+        }
+        else
+            startService(i);
 //        //Register receiver
 //        IntentFilter filter = new IntentFilter();
 //        filter.addAction("android.provider.Telephony.SMS_RECEIVED_ACTION");

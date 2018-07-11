@@ -1,77 +1,154 @@
 package com.theroboticlabs.anti_theft;
 
 import android.annotation.SuppressLint;
-import android.app.job.JobParameters;
-import com.firebase.jobdispatcher.JobService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import android.os.Build;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import static android.support.constraint.Constraints.TAG;
 
 
 /**
  * Created by hariharan on 7/10/18.
  */
 
-
-@SuppressLint("NewApi")
-public class LocateAndSendJob extends JobService {
+public class LocateAndSendJob extends Service {
 
     private AsyncTask background;
+    private SmsReceiver smsReceiver;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String TAG = "LocateAndSendJob";
-    @SuppressLint("StaticFieldLeak")
-    @Override
-    public boolean onStartJob(final com.firebase.jobdispatcher.JobParameters job) {
+    private static final String CHANNEL_ID = "running";
+    private static final int PINTENT_REQUEST = 42;
+    private static final int NOTIFICATION_ID = 22;
+    private final Context context = this;
 
-        background = new AsyncTask() {
-            String number = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-                    .getString(getBaseContext().getString(R.string.phone_key),"");
-            @SuppressLint("MissingPermission")
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                Log.d(TAG, "doInBackground: ");
-                mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-                mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        smsReceiver = new SmsReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(smsReceiver, filter);
+
+        createNotificationChannel();
+
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        final String number;
+
+                Intent i = new Intent(this, MainActivity.class);
+                PendingIntent pIntent = PendingIntent.getActivity(this, PINTENT_REQUEST, i, 0);
+
+                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle("Anti-Theft")
+                        .setContentText("App running and listening for SMS")
+                        .setChannelId(CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentIntent(pIntent)
+                        .build();
+
+                startForeground(NOTIFICATION_ID, notification);
+        if (intent.hasExtra("number")) {
+            number = intent.getExtras().getString("number");
+            if (!"".equals(number)) {
+                Runnable run = new Runnable() {
+                    @SuppressLint("MissingPermission")
                     @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            String smsBody = "Location: "+location.getLatitude() + " " + location.getLongitude();
-                            Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
-                            android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-                            smsManager.sendTextMessage(number, null, smsBody, null, null);
-                            Log.d(TAG, "SMS sent!");
-                            Toast.makeText(getBaseContext(), smsBody, Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            Toast.makeText(getBaseContext(), "Couldn't locate", Toast.LENGTH_LONG).show();
-                        }
+                    public void run() {
+                        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
+                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
+                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
+                                    Log.d(TAG, "SMS sent!");
+                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
                     }
-                });
-                return null;
+                };
+                Thread smsThread = new Thread(run);
+                smsThread.start();
+                stopSelf();
+//                background = new AsyncTask() {
+//                    String number = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getBaseContext())
+//                            .getString(getBaseContext().getString(R.string.phone_key), "");
+//
+//                    @SuppressLint("MissingPermission")
+//                    @Override
+//                    protected Object doInBackground(Object[] objects) {
+//                        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
+//                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+//                            @Override
+//                            public void onSuccess(Location location) {
+//                                if (location != null) {
+//                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+//                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
+//                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+//                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
+//                                    Log.d(TAG, "SMS sent!");
+//                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
+//                                } else {
+//                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
+//                                }
+//                            }
+//                        });
+//                        return null;
+//                    }
+//                };
+
             }
 
-            @Override
-            protected void onPostExecute(Object o) {
-                jobFinished(job, false);
-            }
-        };
-        return true;
+        }
+
+        return START_STICKY;
+    }
+
+    public void createNotificationChannel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,"Running", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Running services channel");
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
     }
 
     @Override
-    public boolean onStopJob(com.firebase.jobdispatcher.JobParameters job) {
-        return false;
+    public void onDestroy() {
+        unregisterReceiver(smsReceiver);
     }
 
-//    @Override
+    //    @Override
 //    public boolean onStartJob(final JobParameters params) {
 //        background = new AsyncTask() {
 //            String number = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getBaseContext())

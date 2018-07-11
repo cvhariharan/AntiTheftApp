@@ -1,10 +1,11 @@
 package com.theroboticlabs.anti_theft;
-
+//TODO: Make a foreground service
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.telephony.SmsMessage;
@@ -27,6 +28,8 @@ public class SmsReceiver extends BroadcastReceiver {
     private static final String JOB_ID = "SMS_JOB";
     private FusedLocationProviderClient mFusedLocationClient;
 
+
+
     @SuppressLint("MissingPermission")
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -41,31 +44,30 @@ public class SmsReceiver extends BroadcastReceiver {
                 final String number = message.getOriginatingAddress();
                 if(phrase.equals(body) && registeredNumber.equals(number)){
                     Toast.makeText(context, "Locating...", Toast.LENGTH_LONG).show();
-//                    mDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
-//                    Job smsJob = mDispatcher.newJobBuilder()
-//                            .setService(LocateAndSendJob.class)
-//                            .setReplaceCurrent(true)
-//                            .setTrigger(Trigger.executionWindow(0, 0))
-//                            .setTag(JOB_ID)
-//                            .build();
-//                    mDispatcher.schedule(smsJob);
-                    mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-                    mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                String smsBody = "Location: "+location.getLatitude() + " " + location.getLongitude();
-                                //Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
-                                android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-                                smsManager.sendTextMessage(number, null, smsBody, null, null);
-                                //Log.d(TAG, "SMS sent!");
-                                Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                    Intent l = new Intent(context, LocateAndSendJob.class);
+                    l.putExtra("number", number);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(l);
+                    }
+                    else
+                        context.startService(l);
+//                    mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+//                    mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+//                        @Override
+//                        public void onSuccess(Location location) {
+//                            if (location != null) {
+//                                String smsBody = "Location: "+location.getLatitude() + " " + location.getLongitude();
+//                                //Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
+//                                android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+//                                smsManager.sendTextMessage(number, null, smsBody, null, null);
+//                                //Log.d(TAG, "SMS sent!");
+//                                Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
+//                            }
+//                            else {
+//                                Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//                    });
 //                    Intent locate = new Intent(context, LocateAndSend.class);
 //                    locate.putExtra("number", number);
 //                    context.startService(locate);
