@@ -16,14 +16,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
@@ -99,24 +97,7 @@ public class LocateAndSendJob extends Service {
                                     Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
                                 }
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
-                            }
                         });
-//                        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//                        Location location = locationManager.getLastKnownLocation("gps");
-//                        if (location != null) {
-//                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
-//                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
-//                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
-//                                    Log.d(TAG, "SMS sent!");
-//                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
-//                                } else {
-//                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
-//                                }
                     }
                 };
                 Handler mainHandler = new Handler(getMainLooper());

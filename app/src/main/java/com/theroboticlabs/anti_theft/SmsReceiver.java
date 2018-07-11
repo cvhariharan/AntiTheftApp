@@ -51,26 +51,6 @@ public class SmsReceiver extends BroadcastReceiver {
                     }
                     else
                         context.startService(l);
-//                    mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-//                    mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-//                        @Override
-//                        public void onSuccess(Location location) {
-//                            if (location != null) {
-//                                String smsBody = "Location: "+location.getLatitude() + " " + location.getLongitude();
-//                                //Log.d(TAG, "onSuccess: "+location.getLatitude() + " " + location.getLongitude());
-//                                android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                                smsManager.sendTextMessage(number, null, smsBody, null, null);
-//                                //Log.d(TAG, "SMS sent!");
-//                                Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
-//                            }
-//                            else {
-//                                Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
-//                            }
-//                        }
-//                    });
-//                    Intent locate = new Intent(context, LocateAndSend.class);
-//                    locate.putExtra("number", number);
-//                    context.startService(locate);
                 }
             }
         }
