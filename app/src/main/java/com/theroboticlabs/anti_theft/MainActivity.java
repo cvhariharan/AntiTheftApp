@@ -44,21 +44,31 @@ public class MainActivity extends AppCompatActivity {
     private void startListening()
     {
         //TODO: check if location services are available
-        Intent i = new Intent(this, LocateAndSendJob.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(i);
+        if(checkLocationAvailable()) {
+            Intent i = new Intent(this, LocateAndSendJob.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(i);
+            } else
+                startService(i);
         }
-        else
-            startService(i);
+        else {
+            Intent intent= new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    private boolean checkLocationAvailable() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void checkAllPermissions() {
         //Since the API >= 23, requires runtime permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                    checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
-//                    checkSelfPermission(Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED &&
-//                    checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
                         Manifest.permission.RECEIVE_SMS,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -69,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 }, 10);
             }
         }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

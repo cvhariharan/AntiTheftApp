@@ -24,6 +24,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     compile 'com.firebase:firebase-jobdispatcher:0.6.0'
+    compile 'com.klinkerapps:android-smsmms:5.0.1'
 //    compile 'io.nlopez.smartlocation:library:3.3.3'
 //    compile 'io.nlopez.smartlocation:rx:3.3.3'
     compile 'com.android.support:preference-v7:27.1.1'
