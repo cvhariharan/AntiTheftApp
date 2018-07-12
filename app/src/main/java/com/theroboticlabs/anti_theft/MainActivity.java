@@ -30,15 +30,28 @@ public class MainActivity extends AppCompatActivity {
 
         checkAllPermissions();
 
-        Button button = (Button) findViewById(R.id.start);
+        Button startButton = (Button) findViewById(R.id.start);
+        final Button stopButton = (Button) findViewById(R.id.stop);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startListening();
             }
         });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopListening();
+            }
+        });
 
+    }
+
+    private void stopListening()
+    {
+        Intent stop = new Intent(this, LocateAndSendJob.class);
+        stopService(stop);
     }
 
     private void startListening()
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAllPermissions() {
-        //Since the API >= 23, requires runtime permission
+        //API >= 23 requires runtime permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||

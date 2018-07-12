@@ -32,14 +32,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class LocateAndSendJob extends Service {
 
-    private AsyncTask background;
     private SmsReceiver smsReceiver;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String TAG = "LocateAndSendJob";
     private static final String CHANNEL_ID = "running";
     private static final int PINTENT_REQUEST = 42;
     private static final int NOTIFICATION_ID = 22;
-    private final Context context = this;
 
     @Nullable
     @Override
@@ -106,33 +104,6 @@ public class LocateAndSendJob extends Service {
 //                Thread smsThread = new Thread(run);
 //                smsThread.start();
                 stopSelf();
-//                background = new AsyncTask() {
-//                    String number = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getBaseContext())
-//                            .getString(getBaseContext().getString(R.string.phone_key), "");
-//
-//                    @SuppressLint("MissingPermission")
-//                    @Override
-//                    protected Object doInBackground(Object[] objects) {
-//                        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-//                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-//                            @Override
-//                            public void onSuccess(Location location) {
-//                                if (location != null) {
-//                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
-//                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
-//                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
-//                                    Log.d(TAG, "SMS sent!");
-//                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
-//                                } else {
-//                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
-//                                }
-//                            }
-//                        });
-//                        return null;
-//                    }
-//                };
-
             }
 
         }

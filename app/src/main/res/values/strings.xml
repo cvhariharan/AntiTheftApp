@@ -8,4 +8,5 @@
     <string name="phrase_summary">Set a pass phrase. The phone will only respond with the location if the message has the pass phrase. Default is locate</string>
     <string name="phrase_key" translatable="false">phrase_key</string>
     <string name="start_button">Start</string>
+    <string name="stop_button">Stop</string>
 </resources>

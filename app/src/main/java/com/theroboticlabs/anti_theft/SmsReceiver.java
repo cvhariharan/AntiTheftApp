@@ -10,17 +10,9 @@ import android.support.v7.preference.PreferenceManager;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.google.android.gms.location.FusedLocationProviderClient;
-
 public class SmsReceiver extends BroadcastReceiver {
 
     private static final String SMS_KEY = "pdus";
-    private FirebaseJobDispatcher mDispatcher;
-    private static final String JOB_ID = "SMS_JOB";
-    private FusedLocationProviderClient mFusedLocationClient;
-
-
 
     @SuppressLint("MissingPermission")
     @Override
