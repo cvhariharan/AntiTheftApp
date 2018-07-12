@@ -10,10 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -80,23 +82,49 @@ public class LocateAndSendJob extends Service {
                     @SuppressLint("MissingPermission")
                     @Override
                     public void run() {
-                        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+//                        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
+//                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+//                            @Override
+//                            public void onSuccess(Location location) {
+//                                if (location != null) {
+//                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+//                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
+//                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+//                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
+//                                    Log.d(TAG, "SMS sent!");
+////                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
+//                                } else {
+//                                    Log.d(TAG, "Couldn't Locate. NULL");
+////                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
+//                                }
+//                            }
+//                        });
+                        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                        LocationListener listener = new LocationListener() {
                             @Override
-                            public void onSuccess(Location location) {
-                                if (location != null) {
-                                    String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
-                                    Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
-                                    android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-                                    smsManager.sendTextMessage(number, null, smsBody, null, null);
-                                    Log.d(TAG, "SMS sent!");
-//                                    Toast.makeText(context, smsBody, Toast.LENGTH_LONG).show();
-                                } else {
-                                    Log.d(TAG, "Couldn't Locate. NULL");
-//                                    Toast.makeText(context, "Couldn't locate", Toast.LENGTH_LONG).show();
-                                }
+                            public void onLocationChanged(Location location) {
+                                String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+                                Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
+                                android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+                                smsManager.sendTextMessage(number, null, smsBody, null, null);
                             }
-                        });
+
+                            @Override
+                            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                            }
+
+                            @Override
+                            public void onProviderEnabled(String provider) {
+
+                            }
+
+                            @Override
+                            public void onProviderDisabled(String provider) {
+
+                            }
+                        };
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, listener);
                     }
                 };
                 Handler mainHandler = new Handler(getMainLooper());
