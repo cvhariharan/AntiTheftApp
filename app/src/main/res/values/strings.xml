@@ -9,4 +9,8 @@
     <string name="phrase_key" translatable="false">phrase_key</string>
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
+    <string name="ringtone">Ring phone</string>
+    <string name="ringtone_key">ringtone</string>
+    <string name="ringtone_summaryOn">Ring the phone when locating</string>
+    <string name="ringtone_summaryOff">Do not ring the phone when locating</string>
 </resources>

@@ -13,6 +13,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +29,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -40,6 +45,7 @@ public class LocateAndSendJob extends Service {
     private static final String CHANNEL_ID = "running";
     private static final int PINTENT_REQUEST = 42;
     private static final int NOTIFICATION_ID = 22;
+    Ringtone r;
 
     @Nullable
     @Override
@@ -60,7 +66,7 @@ public class LocateAndSendJob extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, int flags, int startId) {
         final String number;
 
                 Intent i = new Intent(this, MainActivity.class);
@@ -99,11 +105,33 @@ public class LocateAndSendJob extends Service {
 //                                }
 //                            }
 //                        });
+                        if(intent.getExtras().getBoolean("toRing", false))
+                        {
+                            long ringtonDelay = 30000;
+                            Uri ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                            r = RingtoneManager.getRingtone(getApplicationContext(), ring);
+                            if(!r.isPlaying())
+                                r.play();
+
+                            TimerTask task = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    r.stop();
+                                }
+                            };
+                            Timer timer = new Timer();
+                            timer.schedule(task, ringtonDelay);
+
+                        }
                         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                         LocationListener listener = new LocationListener() {
                             @Override
                             public void onLocationChanged(Location location) {
-                                String smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+                                String smsBody;
+                                if(location != null)
+                                    smsBody = "Location: " + location.getLatitude() + " " + location.getLongitude();
+                                else
+                                    smsBody = "Couldn't locate";
                                 Log.d(TAG, "onSuccess: " + location.getLatitude() + " " + location.getLongitude());
                                 android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
                                 smsManager.sendTextMessage(number, null, smsBody, null, null);

@@ -12,4 +12,11 @@
         android:key="@string/phrase_key"
         android:summary="@string/phrase_summary"
         />
+    <CheckBoxPreference
+        android:id="@+id/ring"
+        android:title="@string/ringtone"
+        android:key="@string/ringtone_key"
+        android:summaryOn="@string/ringtone_summaryOn"
+        android:summaryOff="@string/ringtone_summaryOff"
+        />
 </PreferenceScreen>
